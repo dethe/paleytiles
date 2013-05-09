@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>SVG Tiling Playground</title>
+    <style>
+    form{
+        width: 500px;
+        float: right;
+    }
+    svg{
+        float: left;
+    }
+    summary:focus{
+        outline: 0;
+    }
+    /* Style for switch taken from http://proto.io/freebies/onoff/ */
+    .onoffswitch {
+        position: relative; width: 90px;
+        -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+    }
+    .onoffswitch-checkbox {
+        display: none;
+    }
+    .onoffswitch-label {
+        display: block; overflow: hidden; cursor: pointer;
+        border: 2px solid #666666; border-radius: 30px;
+    }
+    .onoffswitch-inner {
+        width: 200%; margin-left: -100%;
+        -moz-transition: margin 0.3s ease-in 0s; -webkit-transition: margin 0.3s ease-in 0s;
+        -o-transition: margin 0.3s ease-in 0s; transition: margin 0.3s ease-in 0s;
+    }
+    .onoffswitch-inner:before, .onoffswitch-inner:after {
+        float: left; width: 50%; height: 30px; padding: 0; line-height: 30px;
+        font-size: 16px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
+        -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+        border-radius: 30px;
+        box-shadow: 0px 15px 0px rgba(0,0,0,0.08) inset;
+    }
+    .onoffswitch-inner:before {
+        content: "ON";
+        padding-left: 15px;
+        background-color: #6BB2ED; color: #FFFFFF;
+        border-radius: 30px 0 0 30px;
+    }
+    .onoffswitch-inner:after {
+        content: "OFF";
+        padding-right: 15px;
+        background-color: #FFFFFF; color: #666666;
+        text-align: right;
+        border-radius: 0 30px 30px 0;
+    }
+    .onoffswitch-switch {
+        width: 30px; margin: 0px;
+        background: #FFFFFF;
+        border: 2px solid #666666; border-radius: 30px;
+        position: absolute; top: 0; bottom: 0; right: 56px;
+        -moz-transition: all 0.3s ease-in 0s; -webkit-transition: all 0.3s ease-in 0s;
+        -o-transition: all 0.3s ease-in 0s; transition: all 0.3s ease-in 0s;
+        background-image: -moz-linear-gradient(center top, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 80%);
+        background-image: -webkit-linear-gradient(center top, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 80%);
+        background-image: -o-linear-gradient(center top, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 80%);
+        background-image: linear-gradient(center top, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 80%);
+        box-shadow: 0 1px 1px white inset;
+    }
+    .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+        margin-left: 0;
+    }
+    .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
+        right: 0px;
+    }
+    </style>
+</head>
+
+<body id="home">
+
+    <h1>SVG Tiling Playground</h1>
+    <p>Attempting to create an SVG animated version of <a href="http://blog.ninapaley.com/2013/05/04/morphing-tiles/">this</a>.</p>
+    <svg width="500" height="300" viewBox="-250 -150 500 300">
+        <defs>
+            <polygon id="tri" points="-25,-43.3 25,43.3 -25,43.3" fill="inherit" stroke="black" stroke-width="2" />
+            <clipPath x="0" y="0" width="50" height="86.6" maskUnits="userSpaceOnUse" id="clip">
+                <use x="0" y="0" xlink:href="#tri" />
+            </clipPath>
+            <use id="t1" x="-20" y="-10" xlink:href="#tri" fill="#000000" fill-opacity="0.1">
+                <animateTransform attributeName="transform" type="rotate" from="-270 -20 -10" to="90 -20 -10" dur="10s" repeatCount="indefinite" />
+            </use>
+            <use id="t2" x="10" y="-10" xlink:href="#tri" fill="#000000" fill-opacity="0.2">
+                <animateTransform attributeName="transform" type="rotate" from="-180 10 -10" to="180 10 -10" dur="10s" repeatCount="indefinite" />
+            </use>
+            <use id="t3" x="-20" y="20" xlink:href="#tri"  fill="#000000" fill-opacity=".05">
+                <animateTransform attributeName="transform" type="rotate" from="-90 -20 20" to="270 -20 20" dur="10s" repeatCount="indefinite" />
+            </use>
+            <use id="t4" x="10" y="20" xlink:href="#tri" fill="#000000" fill-opacity="0.0">
+                <animateTransform attributeName="transform" type="rotate" from="0 10 20" to="360 10 20" dur="10s" repeatCount="indefinite" />
+            </use>
+
+            <g id="croppedtriangle" clip-path="url(#clip)">
+                <use xlink:href="#t1"></use>
+                <use xlink:href="#t2"></use>
+                <use xlink:href="#t3"></use>
+                <use xlink:href="#t4"></use>
+            </g>
+            <g id="equilateraltriangle">
+                <use x="0" y="43.3" xlink:href="#croppedtriangle" transform="translate(25)" />
+                <use x="0" y="43.3" xlink:href="#croppedtriangle" transform="translate(-25) scale(-1,1)" />
+            </g>
+            <g id="hexagon">
+                <use xlink:href="#equilateraltriangle" x="0" y="0" />
+                <use xlink:href="#equilateraltriangle" x="0" y="0" transform="rotate(60)" />
+                <use xlink:href="#equilateraltriangle" x="0" y="0" transform="rotate(120)" />
+                <use xlink:href="#equilateraltriangle" x="0" y="0" transform="rotate(180)" />
+                <use xlink:href="#equilateraltriangle" x="0" y="0" transform="rotate(240)" />
+                <use xlink:href="#equilateraltriangle" x="0" y="0" transform="rotate(300)" />
+            </g>
+        </defs>
+        <use xlink:href="#hexagon" x="-300" y="-173.2" />
+        <use xlink:href="#hexagon" x="-300" y="0" />
+        <use xlink:href="#hexagon" x="-300" y="173.2" />
+        <use xlink:href="#hexagon" x="-150" y="-86.6" />
+        <use xlink:href="#hexagon" x="-150" y="86.6" />
+        <use xlink:href="#hexagon" x="0" y="-173.2" />
+        <use xlink:href="#hexagon" x="0" y="0" />
+        <use xlink:href="#hexagon" x="0" y="173.2" />
+        <use xlink:href="#hexagon" x="150" y="-86.6" />
+        <use xlink:href="#hexagon" x="150" y="86.6" />
+        <use xlink:href="#hexagon" x="300" y="-173.2" />
+        <use xlink:href="#hexagon" x="300" y="0" />
+        <use xlink:href="#hexagon" x="300" y="173.2" />
+    </svg>
+    <svg width="200" height="200" viewBox="-100 -100 200 200">
+            <g id="controltriangle">
+                <use xlink:href="#t1"></use>
+                <use xlink:href="#t2"></use>
+                <use xlink:href="#t3"></use>
+                <use xlink:href="#t4"></use>
+                <use x="0" y="0" xlink:href="#tri" fill="rgba(0,255,0,.2)"></use>
+            </g>
+
+    </svg>
+    <form>
+        <label>Animation</label>
+        <div class="onoffswitch">
+            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked>
+            <label class="onoffswitch-label" for="myonoffswitch">
+                <div class="onoffswitch-inner"></div>
+                <div class="onoffswitch-switch"></div>
+            </label>
+            </div>
+            <details data-index="0">
+                <summary>Triangle 1</summary>
+                <label>Rotation Duration</label>
+                <output>10</output> seconds
+                <input name="rotation-duration" type="range" value="10" min="0" max="60" /> seconds <br />
+                <label>Rotation Offset</label>
+                <output>90</output> degrees
+                <input name="rotation-offset" type="range" min="0" max="360" value="90" /> <br />
+                <label>Fill Color</label>
+                <output>#000000</output>
+                <input name="fill-color" type="color" value="#000000" /><br />
+                <label>Fill Opacity</label>
+                <output>0.1</output>
+                <input name="fill-opacity" type="range" min="0.0" max="1.0" step="0.05" value="0.1" /> <br />
+                <label>Stroke Color</label>
+                <output>#000000</output>
+                <input name="stroke-color" type="color" value="#000000" /><br />
+                <label>Stroke Opacity</label>
+                <output>1.0</output>
+                <input name="stroke-opacity" type="range" min="0.0" max="1.0" value="1.0" fill="float" /> <br />
+                <label>X Offset</label>
+                <output>-20</output>
+                <input name="x-offset" type="range" min="-50" max="50" value="-20"  /><br />
+                <label>Y Offset</label>
+                <output>-10</output>
+                <input name="y-offset" type="range" min="-50" max="50" value="-10" /><br />
+            </details>
+            <details data-index="1">
+                <summary>Triangle 2</summary>
+                <label>Rotation Duration</label>
+                <output>10</output> seconds
+                <input name="rotation-duration" type="range" min="0" max="60" value="10"/> <br />
+                <label>Rotation Offset</label>
+                <output>180</output> degrees
+                <input name="rotation-offset" type="range" min="0" max="360" value="180" /> <br />
+                <label>Fill Color</label>
+                <output>#000000</output>
+                <input name="fill-color" type="color" value="#000000" /><br />
+                <label>Fill Opacity</label>
+                <output>0.2</output>
+                <input name="fill-opacity" type="range" min="0.0" max="1.0" value="0.2" /> <br />
+                <label>Stroke Color</label>
+                <output>#000000</output>
+                <input name="stroke-color" type="color" value="#000000" /><br />
+                <label>Stroke Opacity</label>
+                <output>1.0</output>
+                <input name="stroke-opacity" type="range" min="0.0" max="1.0" value="1.0" /> <br />
+                <label>X Offset</label>
+                <output>-20</output>
+                <input name="x-offset" type="range" min="-50" max="50" value="-20" /><br />
+                <label>Y Offset</label>
+                <output>-10</output>
+                <input name="y-offset" type="range" min="-50" max="50" value="-10" /><br />
+            </details>
+            <details data-index="2">
+                <summary>Triangle 3</summary>
+                <label>Rotation Duration</label>
+                <output>10</output> seconds
+                <input name="rotation-duration" type="range" min="0" max="60" value="10"/> <br />
+                <label>Rotation Offset</label>
+                <output>270</output> degrees
+                <input name="rotation-offset" type="range" min="0" max="360" value="270" /> <br />
+                <label>Fill Color</label>
+                <output>#000000</output>
+                <input name="fill-color" type="color" value="#000000" /><br />
+                <label>Fill Opacity</label>
+                <output>0.05</output>
+                <input name="fill-opacity" type="range" min="0.0" max="1.0" value="0.05" /> <br />
+                <label>Stroke Color</label>
+                <output>#000000</output>
+                <input name="stroke-color" type="color" value="#000000" /><br />
+                <label>Stroke Opacity</label>
+                <output>1.0</output>
+                <input name="stroke-opacity" type="range" min="0.0" max="1.0" value="1.0" /> <br />
+                <label>X Offset</label>
+                <output>-20</output>
+                <input name="x-offset" type="range" min="-50" max="50" value="-20" /><br />
+                <label>Y Offset</label>
+                <output>-10</output>
+                <input name="y-offset" type="range" min="-50" max="50" value="-10" /><br />
+            </details>
+            <details data-index="3">
+                <summary>Triangle 4</summary>
+                <label>Rotation Duration</label>
+                <output>10</output> seconds
+                <input name="rotation-duration" type="range" min="0" max="60" value="10"/> <br />
+                <label>Rotation Offset</label>
+                <output>0</output> degrees
+                <input name="rotation-offset" type="range" min="0" max="360" value="0" /> <br />
+                <label>Fill Color</label>
+                <output>#000000</output>
+                <input name="fill-color" type="color" value="#000000" /><br />
+                <label>Fill Opacity</label>
+                <output>0.0</output>
+                <input name="fill-opacity" type="range" min="0.0" max="1.0" value="0.0" /> <br />
+                <label>Stroke Color</label>
+                <output>#000000</output>
+                <input name="stroke-color" type="color" value="#000000" /><br />
+                <label>Stroke Opacity</label>
+                <output>1.0</output>
+                <input name="stroke-opacity" type="range" min="0.0" max="1.0" value="1.0" /> <br />
+                <label>X Offset</label>
+                <output>-20</output>
+                <input name="x-offset" type="range" min="-50" max="50" value="-20" /><br />
+                <label>Y Offset</label>
+                <output>-10</output>
+                <input name="y-offset" type="range" min="-50" max="50" value="-10" /><br />
+            </details>
+    </form>
+    <script>
+        var t1 = document.getElementById('t1');
+        var t2 = document.getElementById('t2');
+        var t3 = document.getElementById('t3');
+        var t4 = document.getElementById('t4');
+        var all = [t1, t2, t3, t4];
+        function toggleAnimation(event){
+            if (event.target.checked){
+                all.forEach(function(t){
+                    t.firstElementChild.setAttribute('repeatCount', 'indefinite');
+                });
+            }else{
+                all.forEach(function(t){
+                    t.firstElementChild.setAttribute('repeatCount', '0');
+                });
+            }
+        }
+        document.getElementById('myonoffswitch').addEventListener('change', toggleAnimation, false);
+        function updateTriangle(event){
+            if (event.target.tagName.toLowerCase() === 'input'){
+                var target = event.target;
+                if (target.type === 'checkbox') return;
+                var triangle = all[target.parentElement.dataset.index];
+                if (target.previousElementSibling.tagName.toLowerCase() === 'output'){
+                    target.previousElementSibling.innerHTML = target.value;
+                }
+                console.log('updating %s', target.name);
+                switch(target.name){
+                    case 'rotation-duration':
+                        triangle.firstElementChild.setAttribute('dur', target.value + 's'); break;
+                    case 'fill-color':
+                        triangle.setAttribute('fill', target.value); break;
+                    case 'fill-opacity':
+                        triangle.setAttribute('fill-opacity', target.value); break;
+                    case 'stroke-color':
+                        triangle.setAttribute('stroke', target.value); break;
+                    case 'stroke-opacity':
+                        triangle.setAttribute('stroke-opacity', target.value); break;
+                    case 'rotation-offset':
+                    case 'x-offset':
+                    case 'y-offset':
+                        var x = target.parentElement.querySelector('[name=x-offset]').value;
+                        var y = target.parentElement.querySelector('[name=y-offset]').value;
+                        var to_angle = parseFloat(target.parentElement.querySelector('[name=rotation-offset]').value);
+                        var from_angle = to_angle - 360;
+                        triangle.setAttribute('x', x);
+                        triangle.setAttribute('y', y);
+                        triangle.firstElementChild.setAttribute('from', [from_angle, x, y].join(' '));
+                        triangle.firstElementChild.setAttribute('to', [to_angle, x, y].join(' '));
+                        break;
+                    default:
+                        console.log('This should not happen, but we did not handle %s properly', target.name); break;
+                }
+            }
+        }
+        document.querySelector('form').addEventListener('change', updateTriangle, false);
+    </script>
+</body>
+</html>
