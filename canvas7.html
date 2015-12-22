@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>TITLE</title>
+</head>
+<body>
+    <canvas width="640" height="480"></canvas>
+    <script>
+var c = document.querySelector('canvas');
+var ctx = c.getContext('2d');
+var WIDTH = 640;
+var HEIGHT = 480;
+
+var spinners = [
+    {
+        x: 15,
+        y: 25,
+        angle: Math.PI / 2,
+        color: 'rgba(0,0,0,0.1)',
+        speed: 0.01
+    },
+    {
+        x: -10,
+        y: -10,
+        angle: Math.PI,
+        color: 'rgba(255,255,0,0.1)',
+        speed: 0.015
+    },
+    {
+        x: 25,
+        y: -25,
+        angle: -Math.PI / 2,
+        color: 'rgba(255,0,255,0.1)',
+        speed: 0.012
+    },
+    {
+        x: 10,
+        y: -20,
+        angle: 0,
+        color: 'rgba(0,255,255,0.1)',
+        speed: 0.008
+    }
+];
+
+// triangle dimensions for a given hypotenuse
+// draw a right triangle based on it's hypotenuse
+// h = sqrt(height^2 + width^2)
+// because this is half an equalateral triangle the width of the base is h/2
+// h = sqrt(height^2 + (h/2)^2)
+// h^2 = height^2 + (h/2)^2
+// height^2 = h^2 - (h/2)^2
+// height = sqrt(h^2 - (h/2)^2)
+var hypot = 150;
+var height = Math.sqrt(Math.pow(hypot, 2) - Math.pow(hypot/2, 2));
+var width = hypot / 2;
+
+function triangle(x, y){
+    ctx.beginPath();
+    ctx.moveTo(x,y);
+    ctx.lineTo(x,y - height);
+    ctx.lineTo(x+width,y);
+    ctx.lineTo(x,y);
+}
+
+var canvases = {};
+function getCanvas(w,h){
+    var key = w + '_' + h;
+    if (canvases[key]){
+        return canvases[key];
+    }
+    var canvas = document.createElement('canvas');
+    canvas.setAttribute('width', w);
+    canvas.setAttribute('height', h);
+    canvases[key] = canvas;
+    return canvas;
+}
+
+function imageFromRect(x,y,w,h){
+    // extracts a separate canvas from the given coordinates
+    var c2 = getCanvas(w, h);
+    var ctx2 = c2.getContext('2d');
+    ctx2.clearRect(0,0,w,h); // so we can re-use canvases
+    ctx2.drawImage(c, x, y, w, h, 0, 0, w, h);
+    return c2;
+}
+
+function mirrorY(x,y,w,h){
+    var img = imageFromRect(x,y,w,h);
+    ctx.save();
+    ctx.translate(x,y);
+    ctx.scale(-1,1);
+    ctx.translate(-x,-y);
+    ctx.drawImage(img, x, y);
+    ctx.restore();
+}
+
+(function() {
+    var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+          window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+          window.requestAnimationFrame = requestAnimationFrame;
+})();
+function eachFrame(){
+    var baseX = 200;
+    var baseY = 200;
+    ctx.clearRect(0,0,WIDTH,HEIGHT);
+    ctx.save();
+    triangle (baseX, baseY);
+    ctx.clip();
+    spinners.forEach(function(spin){
+        var x = baseX + spin.x;
+        var y = baseY - spin.y;
+        var cx = x + width/2;
+        var cy = y - height/2;
+        ctx.save();
+        ctx.fillStyle = spin.color;
+        ctx.translate(cx, cy);
+        ctx.rotate(spin.angle);
+        ctx.translate(-cx, -cy);
+        triangle(x, y);
+        ctx.stroke();
+        ctx.fill();
+        ctx.restore();
+        spin.angle -= spin.speed
+    });
+    ctx.restore();
+    mirrorY(baseX, baseY-height, width, height);
+    requestAnimationFrame(eachFrame);
+}
+
+function main(){
+    eachFrame();
+}
+
+main();
+
+
+    </script>
+</body>
+</html>

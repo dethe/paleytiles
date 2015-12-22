@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>TITLE</title>
+</head>
+<body>
+    <canvas width="640" height="480"></canvas>
+    <script>
+var c = document.querySelector('canvas');
+var ctx = c.getContext('2d');
+var WIDTH = 640;
+var HEIGHT = 480;
+
+var spinners = [
+    {
+        x: 15,
+        y: 25,
+        angle: Math.PI / 2,
+        color: 'rgba(0,0,0,0.1)',
+        speed: 0.01
+    },
+    {
+        x: -10,
+        y: -10,
+        angle: Math.PI,
+        color: 'rgba(255,255,0,0.1)',
+        speed: 0.015
+    },
+    {
+        x: 25,
+        y: -25,
+        angle: -Math.PI / 2,
+        color: 'rgba(255,0,255,0.1)',
+        speed: 0.012
+    },
+    {
+        x: 10,
+        y: -20,
+        angle: 0,
+        color: 'rgba(0,255,255,0.1)',
+        speed: 0.008
+    }
+];
+
+// triangle dimensions for a given hypotenuse
+// draw a right triangle based on it's hypotenuse
+// h = sqrt(height^2 + width^2)
+// because this is half an equalateral triangle the width of the base is h/2
+// h = sqrt(height^2 + (h/2)^2)
+// h^2 = height^2 + (h/2)^2
+// height^2 = h^2 - (h/2)^2
+// height = sqrt(h^2 - (h/2)^2)
+var hypot = 150;
+var height = Math.sqrt(Math.pow(hypot, 2) - Math.pow(hypot/2, 2));
+var width = hypot / 2;
+
+function triangle(x, y){
+    ctx.beginPath();
+    ctx.moveTo(x,y);
+    ctx.lineTo(x,y - height);
+    ctx.lineTo(x+width,y);
+    ctx.lineTo(x,y);
+}
+
+(function() {
+    var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+          window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+          window.requestAnimationFrame = requestAnimationFrame;
+})();
+function eachFrame(){
+    var baseX = 200;
+    var baseY = 200;
+    ctx.clearRect(0,0,WIDTH,HEIGHT);
+    ctx.save();
+    triangle (baseX, baseY);
+    ctx.stroke();
+    spinners.forEach(function(spin){
+        var x = baseX + spin.x;
+        var y = baseY - spin.y;
+        var cx = x + width/2;
+        var cy = y - height/2;
+        ctx.save();
+        ctx.fillStyle = spin.color;
+        ctx.translate(cx, cy);
+        ctx.rotate(spin.angle);
+        ctx.translate(-cx, -cy);
+        triangle(x, y);
+        ctx.stroke();
+        ctx.fill();
+        ctx.restore();
+        spin.angle -= spin.speed
+    });
+    ctx.restore();
+    requestAnimationFrame(eachFrame);
+}
+
+function main(){
+    eachFrame();
+}
+
+main();
+
+
+    </script>
+</body>
+</html>
